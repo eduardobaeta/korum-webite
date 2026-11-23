@@ -1,0 +1,60 @@
+---
+import Button from '@/components/ui/Button.astro';
+import TextField from '@/components/ui/TextField.astro';
+import { HONEYPOT_FIELD } from '../application/process-lead-submission';
+
+interface Props {
+  action: string;
+  emailLabel: string;
+  emailPlaceholder: string;
+  submitLabel: string;
+  note: string;
+  messages: { success: string; invalid: string; rateLimited: string; error: string };
+  class?: string;
+}
+
+const { action, emailLabel, emailPlaceholder, submitLabel, note, messages, class: className } = Astro.props;
+---
+
+<form
+  method="POST"
+  action={action}
+  class:list={['relative', className]}
+  data-lead-form="newsletter-subscription"
+  data-message-success={messages.success}
+  data-message-invalid={messages.invalid}
+  data-message-rate-limited={messages.rateLimited}
+  data-message-error={messages.error}
+>
+  <div class="flex flex-col gap-3 md:flex-row md:items-center md:gap-2">
+    <TextField
+      id="newsletter-email"
+      name="email"
+      type="email"
+      label={emailLabel}
+      placeholder={emailPlaceholder}
+      autocomplete="email"
+      maxlength={254}
+      required
+      hideLabel
+      class="md:w-68"
+    />
+    <Button type="submit" size="lg" block class="md:w-70">
+      {submitLabel}
+    </Button>
+  </div>
+
+  <div class="absolute -left-2500" aria-hidden="true">
+    <label>
+      Website <input type="text" name={HONEYPOT_FIELD} tabindex="-1" autocomplete="off" />
+    </label>
+  </div>
+
+  <p class="type-small mt-3 text-muted-foreground">{note}</p>
+  <p class="type-small mt-2 font-semibold text-foreground empty:hidden" role="status" data-form-status></p>
+</form>
+
+<script>
+  import { enhanceLeadForms } from './enhance-lead-forms';
+  enhanceLeadForms('[data-lead-form="newsletter-subscription"]');
+</script>

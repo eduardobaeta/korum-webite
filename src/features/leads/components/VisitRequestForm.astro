@@ -1,0 +1,101 @@
+---
+import type { SelectOption } from '@/components/types';
+import Button from '@/components/ui/Button.astro';
+import SelectField from '@/components/ui/SelectField.astro';
+import TextAreaField from '@/components/ui/TextAreaField.astro';
+import TextField from '@/components/ui/TextField.astro';
+import { HONEYPOT_FIELD } from '../application/process-lead-submission';
+
+interface FieldText {
+  label: string;
+  placeholder?: string;
+}
+
+interface Props {
+  action: string;
+  fields: Record<'name' | 'company' | 'whatsapp' | 'email' | 'interest' | 'period' | 'message', FieldText>;
+  interestOptions: readonly SelectOption[];
+  periodOptions: readonly SelectOption[];
+  submitLabel: string;
+  note: string;
+  messages: { success: string; invalid: string; rateLimited: string; error: string };
+  class?: string;
+}
+
+const { action, fields, interestOptions, periodOptions, submitLabel, note, messages, class: className } = Astro.props;
+---
+
+<form
+  method="POST"
+  action={action}
+  class:list={['relative', className]}
+  data-lead-form="visit-request"
+  data-message-success={messages.success}
+  data-message-invalid={messages.invalid}
+  data-message-rate-limited={messages.rateLimited}
+  data-message-error={messages.error}
+>
+  <div class="grid gap-4 md:grid-cols-2">
+    <TextField
+      id="visit-name"
+      name="name"
+      autocomplete="name"
+      required
+      minlength={2}
+      maxlength={120}
+      {...fields.name}
+    />
+    <TextField
+      id="visit-company"
+      name="company"
+      autocomplete="organization"
+      required
+      maxlength={160}
+      {...fields.company}
+    />
+    <TextField
+      id="visit-whatsapp"
+      name="whatsapp"
+      type="tel"
+      inputmode="tel"
+      autocomplete="tel"
+      required
+      {...fields.whatsapp}
+    />
+    <TextField id="visit-email" name="email" type="email" autocomplete="email" maxlength={254} {...fields.email} />
+    <SelectField
+      id="visit-interest"
+      name="interest"
+      required
+      options={interestOptions}
+      class="md:col-span-2"
+      {...fields.interest}
+    />
+    <SelectField
+      id="visit-period"
+      name="period"
+      required
+      options={periodOptions}
+      class="md:col-span-2"
+      {...fields.period}
+    />
+    <TextAreaField id="visit-message" name="message" maxlength={1000} class="md:col-span-2" {...fields.message} />
+  </div>
+
+  <div class="absolute -left-2500" aria-hidden="true">
+    <label>
+      Website <input type="text" name={HONEYPOT_FIELD} tabindex="-1" autocomplete="off" />
+    </label>
+  </div>
+
+  <Button type="submit" size="md" block class="mt-4">
+    {submitLabel}
+  </Button>
+  <p class="type-small mt-3 text-foreground">{note}</p>
+  <p class="type-small mt-2 font-semibold text-foreground empty:hidden" role="status" data-form-status></p>
+</form>
+
+<script>
+  import { enhanceLeadForms } from './enhance-lead-forms';
+  enhanceLeadForms('[data-lead-form="visit-request"]');
+</script>
