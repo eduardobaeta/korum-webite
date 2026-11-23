@@ -1,0 +1,66 @@
+---
+import type { HTMLAttributes } from 'astro/types';
+import ArrowIcon from '@/assets/icons/arrow-down-right.svg';
+
+interface CommonProps {
+  variant?: 'solid' | 'inverse' | 'text';
+  size?: 'sm' | 'md' | 'lg';
+  block?: boolean;
+  type?: 'button' | 'submit' | 'reset';
+}
+
+type LinkProps = CommonProps & Omit<HTMLAttributes<'a'>, 'href' | 'type'> & { href: string };
+type ButtonProps = CommonProps & Omit<HTMLAttributes<'button'>, 'type'> & { href?: never };
+type Props = LinkProps | ButtonProps;
+
+// Astro renders duplicated attributes instead of overriding them, so `type`
+// is resolved here rather than combined with a spread.
+const { variant = 'solid', size = 'sm', block = false, type = 'button', class: className, ...attributes } = Astro.props;
+
+const isPill = variant !== 'text';
+
+const variantClasses = {
+  solid: 'bg-primary text-primary-foreground',
+  inverse: 'bg-inverse-primary text-inverse-primary-foreground',
+  text: 'py-1.5 text-foreground',
+};
+
+const sizeClasses = {
+  sm: block ? 'h-9.5 px-5' : 'h-9.5 pr-4 pl-4.5',
+  md: 'h-10.5 px-5',
+  lg: 'h-12 px-5',
+};
+
+const classes = [
+  'type-button inline-flex items-center gap-2 whitespace-nowrap transition-opacity duration-200 hover:opacity-75',
+  'disabled:pointer-events-none disabled:opacity-50 aria-busy:pointer-events-none aria-busy:opacity-50',
+  variantClasses[variant],
+  isPill && ['rounded-full', sizeClasses[size]],
+  block && 'w-full justify-center',
+  className,
+];
+
+const isLink = 'href' in attributes && typeof attributes.href === 'string';
+const isExternal = isLink && attributes.href.startsWith('http');
+---
+
+{isLink ? (
+  <a
+    class:list={classes}
+    target={isExternal ? '_blank' : undefined}
+    rel={isExternal ? 'noopener noreferrer' : undefined}
+    {...attributes}
+  >
+    <span>
+      <slot />
+    </span>
+    <ArrowIcon class="size-3.5 shrink-0" aria-hidden="true" />
+  </a>
+) : (
+  <button class:list={classes} type={type} {...attributes}>
+    <span>
+      <slot />
+    </span>
+    <ArrowIcon class="size-3.5 shrink-0" aria-hidden="true" />
+  </button>
+)}

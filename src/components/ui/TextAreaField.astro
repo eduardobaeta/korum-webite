@@ -1,0 +1,24 @@
+---
+import type { HTMLAttributes } from 'astro/types';
+
+type Props = Omit<HTMLAttributes<'textarea'>, 'id' | 'name' | 'class'> & {
+  id: string;
+  label: string;
+  name: string;
+  class?: string;
+};
+
+const { id, label, name, class: className, ...textareaAttributes } = Astro.props;
+---
+
+<div class:list={['flex flex-col gap-2', className]}>
+  <label for={id} class="type-eyebrow text-foreground">
+    {label}
+  </label>
+  <textarea
+    id={id}
+    name={name}
+    class="form-control type-field h-24 resize-none py-2.5"
+    {...textareaAttributes}
+  ></textarea>
+</div>

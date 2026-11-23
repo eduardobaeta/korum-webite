@@ -1,0 +1,36 @@
+---
+import type { LinkItem } from '@/components/types';
+import Button from './Button.astro';
+import LineBreaks from './LineBreaks.astro';
+
+interface Props {
+  eyebrow: string;
+  titleLines: readonly string[];
+  description?: string;
+  action?: LinkItem;
+  sticky?: boolean;
+}
+
+const { eyebrow, titleLines, description, action, sticky = false } = Astro.props;
+---
+
+<div class:list={[sticky && 'sticky-intro']}>
+  <p class="type-eyebrow text-foreground" data-reveal>
+    {eyebrow}
+  </p>
+  <h2 class="type-heading-sm mt-6 text-foreground" data-reveal-words>
+    <LineBreaks lines={titleLines} />
+  </h2>
+  {description && (
+    <p class="type-small mt-10 text-muted-foreground" data-reveal>
+      {description}
+    </p>
+  )}
+  {action && (
+    <div class="mt-3" data-reveal>
+      <Button href={action.href} variant="text">
+        {action.label}
+      </Button>
+    </div>
+  )}
+</div>

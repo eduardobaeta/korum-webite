@@ -1,0 +1,307 @@
+/* Headings and titles are always uppercase 600 by brand rule. */
+
+@utility type-display {
+  font-size: 3rem;
+  line-height: 1;
+  letter-spacing: -0.02em;
+  font-weight: 600;
+  text-transform: uppercase;
+  @variant md {
+    font-size: 4rem;
+  }
+  @variant lg {
+    font-size: 5.75rem;
+  }
+}
+
+@utility type-statement {
+  font-size: 4.125rem;
+  line-height: 1;
+  letter-spacing: -0.03em;
+  font-weight: 600;
+  text-transform: uppercase;
+  @variant md {
+    font-size: 6.25rem;
+  }
+  @variant lg {
+    font-size: 7.75rem;
+  }
+}
+
+@utility type-heading-2xl {
+  font-size: 2.625rem;
+  line-height: 1;
+  letter-spacing: -0.02em;
+  font-weight: 600;
+  text-transform: uppercase;
+  @variant md {
+    font-size: 3.75rem;
+  }
+  @variant lg {
+    font-size: 5rem;
+  }
+}
+
+@utility type-heading-xl {
+  font-size: 2.5rem;
+  line-height: 1;
+  letter-spacing: -0.02em;
+  font-weight: 600;
+  text-transform: uppercase;
+  @variant md {
+    font-size: 3.5rem;
+  }
+  @variant lg {
+    font-size: 4.5rem;
+  }
+}
+
+@utility type-heading-lg {
+  font-size: 2rem;
+  line-height: 1;
+  letter-spacing: -0.02em;
+  font-weight: 600;
+  text-transform: uppercase;
+  @variant md {
+    font-size: 3.25rem;
+  }
+  @variant lg {
+    font-size: 4rem;
+  }
+}
+
+@utility type-heading-md {
+  font-size: 2.125rem;
+  line-height: 1.03;
+  letter-spacing: -0.015em;
+  font-weight: 600;
+  text-transform: uppercase;
+  @variant md {
+    font-size: 2.75rem;
+  }
+  @variant lg {
+    font-size: 3.5rem;
+  }
+}
+
+@utility type-heading-sm {
+  font-size: 2.125rem;
+  line-height: 1.03;
+  letter-spacing: -0.01em;
+  font-weight: 600;
+  text-transform: uppercase;
+  @variant md {
+    font-size: 2.25rem;
+  }
+  @variant lg {
+    font-size: 2.5rem;
+  }
+}
+
+@utility type-quote {
+  font-size: 1.875rem;
+  line-height: 1.05;
+  letter-spacing: -0.02em;
+  font-weight: 600;
+  text-transform: uppercase;
+  @variant md {
+    font-size: 2.75rem;
+  }
+  @variant lg {
+    font-size: 3.5rem;
+  }
+}
+
+@utility type-title-xl {
+  font-size: 2rem;
+  line-height: 1;
+  letter-spacing: -0.015em;
+  font-weight: 600;
+  text-transform: uppercase;
+  @variant md {
+    font-size: 2.75rem;
+  }
+  @variant lg {
+    font-size: 3.5rem;
+  }
+}
+
+@utility type-title-lg {
+  font-size: 1.75rem;
+  line-height: 1.03;
+  letter-spacing: -0.01em;
+  font-weight: 600;
+  text-transform: uppercase;
+  @variant md {
+    font-size: 2.25rem;
+  }
+  @variant lg {
+    font-size: 2.5rem;
+  }
+}
+
+@utility type-title-md {
+  font-size: 1.625rem;
+  line-height: 1.05;
+  letter-spacing: -0.01em;
+  font-weight: 600;
+  text-transform: uppercase;
+  @variant md {
+    font-size: 1.5rem;
+  }
+  @variant lg {
+    font-size: 2rem;
+  }
+}
+
+@utility type-title-sm {
+  font-size: 1.125rem;
+  line-height: 1.1;
+  font-weight: 600;
+  text-transform: uppercase;
+  @variant md {
+    font-size: 1.25rem;
+  }
+  @variant lg {
+    font-size: 1.375rem;
+  }
+}
+
+@utility type-index {
+  font-size: 2rem;
+  line-height: 1.03;
+  letter-spacing: -0.01em;
+  font-weight: 600;
+  text-transform: uppercase;
+  @variant md {
+    font-size: 2.5rem;
+  }
+  @variant lg {
+    font-size: 3rem;
+  }
+}
+
+@utility type-menu {
+  font-size: 2.125rem;
+  line-height: 1.4;
+  letter-spacing: -0.01em;
+  font-weight: 600;
+  text-transform: uppercase;
+}
+
+@utility type-price {
+  font-size: 2.25rem;
+  line-height: 1;
+  letter-spacing: -0.02em;
+  font-weight: 600;
+  @variant md {
+    font-size: 2.5rem;
+  }
+  @variant lg {
+    font-size: 3rem;
+  }
+}
+
+@utility type-numeral {
+  font-size: 1.75rem;
+  line-height: 1;
+  letter-spacing: -0.02em;
+  font-weight: 600;
+  text-transform: uppercase;
+}
+
+@utility type-lead-lg {
+  font-size: 1.125rem;
+  line-height: 1.4;
+  @variant md {
+    font-size: 1.25rem;
+  }
+  @variant lg {
+    font-size: 1.5rem;
+  }
+}
+
+@utility type-lead {
+  font-size: 1.0625rem;
+  line-height: 1.45;
+  @variant md {
+    font-size: 1.125rem;
+  }
+  @variant lg {
+    font-size: 1.25rem;
+  }
+}
+
+@utility type-intro {
+  font-size: 1rem;
+  line-height: 1.5;
+  font-weight: 500;
+  @variant md {
+    font-size: 1.125rem;
+  }
+}
+
+@utility type-emphasis {
+  font-size: 1rem;
+  line-height: 1.35;
+  font-weight: 500;
+  @variant md {
+    font-size: 1.0625rem;
+  }
+}
+
+@utility type-body {
+  font-size: 0.9375rem;
+  line-height: 1.6;
+}
+
+@utility type-small {
+  font-size: 0.8125rem;
+  line-height: 1.5;
+}
+
+@utility type-eyebrow {
+  font-size: 0.75rem;
+  line-height: 1.2;
+  font-weight: 600;
+  text-transform: uppercase;
+  @variant md {
+    font-size: 0.8125rem;
+  }
+}
+
+@utility type-caption {
+  font-size: 0.75rem;
+  line-height: 1.45;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  @variant md {
+    font-size: 0.8125rem;
+  }
+}
+
+@utility type-nav {
+  font-size: 0.75rem;
+  line-height: 1;
+  font-weight: 600;
+  text-transform: uppercase;
+}
+
+@utility type-button {
+  font-size: 0.8125rem;
+  line-height: 1;
+  font-weight: 600;
+  text-transform: uppercase;
+}
+
+@utility type-tag {
+  font-size: 0.8125rem;
+  line-height: 1;
+  font-weight: 600;
+}
+
+@utility type-field {
+  font-size: 0.9375rem;
+  line-height: 1.4;
+}

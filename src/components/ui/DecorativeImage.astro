@@ -1,0 +1,39 @@
+---
+import type { ImageMetadata } from 'astro';
+import { Image } from 'astro:assets';
+
+/** The scale reveal targets the <img> so an opacity set on the wrapper is preserved. */
+interface Props {
+  image: ImageMetadata;
+  sizes: string;
+  widths: number[];
+  class?: string;
+  eager?: boolean;
+  blend?: 'normal' | 'multiply';
+  reveal?: { from: number; duration?: number; delay?: number };
+}
+
+const { image, sizes, widths, class: className, eager = false, blend = 'normal', reveal } = Astro.props;
+
+const revealAttributes = reveal
+  ? {
+      'data-reveal': 'scale',
+      'data-reveal-scale': String(reveal.from),
+      'data-reveal-duration': reveal.duration === undefined ? undefined : String(reveal.duration),
+      'data-reveal-delay': reveal.delay === undefined ? undefined : String(reveal.delay),
+    }
+  : {};
+---
+
+<div class:list={['pointer-events-none absolute select-none', className]} aria-hidden="true">
+  <Image
+    src={image}
+    alt=""
+    widths={widths}
+    sizes={sizes}
+    quality={92}
+    loading={eager ? 'eager' : 'lazy'}
+    class:list={['block h-auto w-full', blend === 'multiply' && 'mix-blend-multiply']}
+    {...revealAttributes}
+  />
+</div>
