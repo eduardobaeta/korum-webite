@@ -1,0 +1,56 @@
+---
+import LineBreaks from '@/components/ui/LineBreaks.astro';
+
+interface Props {
+  id: string;
+  eyebrow: string;
+  baselineTitleLines: readonly string[];
+  ourTitleLines: readonly string[];
+  tableLabel: string;
+  columns: { baseline: string; ours: string };
+  rows: readonly { baseline: string; ours: string }[];
+}
+
+const { id, eyebrow, baselineTitleLines, ourTitleLines, tableLabel, columns, rows } = Astro.props;
+---
+
+<section id={id} class="section-space bg-background">
+  <div class="container-site grid-site gap-y-6">
+    <p class="type-eyebrow col-span-full text-foreground lg:col-span-4" data-reveal>
+      {eyebrow}
+    </p>
+
+    <div class="col-span-full lg:col-span-8 lg:col-start-5">
+      <h2 class="type-heading-lg" data-reveal-words>
+        <span class="block text-muted-foreground">
+          <LineBreaks lines={baselineTitleLines} />
+        </span>
+        <span class="mt-4 block text-foreground">
+          <LineBreaks lines={ourTitleLines} />
+        </span>
+      </h2>
+
+      <!-- ARIA table roles survive the grid layout that stacks rows on phones. -->
+      <div class="mt-16 md:mt-20 lg:mt-29" role="table" aria-label={tableLabel} data-reveal>
+        <div class="grid grid-cols-2 gap-x-5 pb-5" role="row">
+          <p class="type-eyebrow text-muted-foreground" role="columnheader">
+            {columns.baseline}
+          </p>
+          <p class="type-eyebrow text-foreground" role="columnheader">
+            {columns.ours}
+          </p>
+        </div>
+        {rows.map((row) => (
+          <div class="grid gap-x-5 border-t border-border py-5 md:grid-cols-2" role="row">
+            <p class="type-emphasis text-muted-foreground" role="cell">
+              {row.baseline}
+            </p>
+            <p class="type-emphasis text-foreground max-md:mt-1" role="cell">
+              {row.ours}
+            </p>
+          </div>
+        ))}
+      </div>
+    </div>
+  </div>
+</section>

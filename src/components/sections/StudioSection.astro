@@ -1,0 +1,47 @@
+---
+import type { LinkItem } from '@/components/types';
+import Button from '@/components/ui/Button.astro';
+import LineBreaks from '@/components/ui/LineBreaks.astro';
+
+interface Props {
+  id: string;
+  eyebrow: string;
+  titleLines: readonly string[];
+  description: string;
+  action: LinkItem;
+  features: readonly { title: string; text: string }[];
+}
+
+const { id, eyebrow, titleLines, description, action, features } = Astro.props;
+---
+
+<section id={id} class="section-space bg-background">
+  <div class="container-site">
+    <div class="grid-site">
+      <div class="col-span-full lg:col-span-9">
+        <p class="type-eyebrow text-foreground" data-reveal>
+          {eyebrow}
+        </p>
+        <h2 class="type-heading-2xl mt-6 text-foreground" data-reveal-words>
+          <LineBreaks lines={titleLines} />
+        </h2>
+      </div>
+      <!-- Desktop: aligned with the heading's first line (eyebrow height + gap). -->
+      <div class="col-span-full mt-6 md:col-span-5 lg:col-span-3 lg:mt-0 lg:pt-9.75" data-reveal>
+        <p class="type-small text-muted-foreground">{description}</p>
+        <Button href={action.href} variant="text" class="mt-3">
+          {action.label}
+        </Button>
+      </div>
+    </div>
+
+    <ul class="mt-16 divide-y divide-border md:mt-24 lg:mt-30">
+      {features.map((feature) => (
+        <li class="grid-site py-7 lg:py-8" data-reveal>
+          <h3 class="type-title-lg col-span-full text-foreground md:col-span-5 lg:col-start-5">{feature.title}</h3>
+          <p class="type-body col-span-full mt-3 text-muted-foreground md:col-span-3 md:mt-0">{feature.text}</p>
+        </li>
+      ))}
+    </ul>
+  </div>
+</section>

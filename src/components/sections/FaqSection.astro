@@ -1,0 +1,35 @@
+---
+import type { ComponentProps } from 'astro/types';
+import SectionIntro from '@/components/ui/SectionIntro.astro';
+
+interface Props {
+  id: string;
+  intro: Omit<ComponentProps<typeof SectionIntro>, 'sticky'>;
+  items: readonly { question: string; answer: string }[];
+}
+
+const { id, intro, items } = Astro.props;
+---
+
+<section id={id} class="section-space bg-background">
+  <div class="container-site grid-site">
+    <div class="col-span-full lg:col-span-4">
+      <SectionIntro {...intro} sticky />
+    </div>
+
+    <div class="col-span-full mt-12 md:mt-16 lg:col-span-7 lg:col-start-6 lg:mt-0" data-reveal>
+      {items.map((item) => (
+        <details class="disclosure group border-b border-border">
+          <summary class="flex list-none items-center justify-between gap-6 py-6.5 transition-[padding] duration-500 ease-standard group-open:pb-4 [&::-webkit-details-marker]:hidden">
+            <h3 class="type-title-sm text-foreground">{item.question}</h3>
+            <span class="relative size-4 shrink-0" aria-hidden="true">
+              <span class="absolute inset-x-0 top-1/2 h-0.5 -translate-y-1/2 bg-foreground" />
+              <span class="absolute inset-y-0 left-1/2 w-0.5 -translate-x-1/2 bg-foreground transition-transform duration-500 ease-standard group-open:rotate-90" />
+            </span>
+          </summary>
+          <p class="type-body pr-16 pb-6.5 text-muted-foreground">{item.answer}</p>
+        </details>
+      ))}
+    </div>
+  </div>
+</section>

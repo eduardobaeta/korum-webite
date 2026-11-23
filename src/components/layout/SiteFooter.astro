@@ -1,0 +1,46 @@
+---
+import { contact, footerLinks, sectionIds, siteConfig } from '@/config/site';
+import LineBreaks from '@/components/ui/LineBreaks.astro';
+
+const Logo = siteConfig.logo;
+---
+
+<footer id={sectionIds.contact} class="bg-background pt-18 pb-6 md:pt-24 md:pb-7 lg:pt-30 lg:pb-8">
+  <div class="container-site">
+    <div class="flex flex-col gap-5 md:flex-row md:justify-between">
+      <p class="type-caption text-foreground">
+        <LineBreaks lines={siteConfig.slogan} />
+      </p>
+      <address class="type-caption text-foreground not-italic md:text-right">
+        {contact.instagramHandle} · {contact.whatsappDisplay}
+        <br />
+        {contact.address}
+      </address>
+    </div>
+
+    <Logo
+      class="mt-14 h-auto w-full overflow-visible text-foreground lg:mt-15.75"
+      role="img"
+      aria-label={siteConfig.name}
+    />
+
+    <div class="mt-8 flex flex-col gap-3 md:mt-10 md:flex-row md:items-center md:justify-between lg:mt-12.25">
+      <p class="type-caption text-muted-foreground">{siteConfig.copyright}</p>
+      <p class="type-caption text-muted-foreground">{contact.city}</p>
+      <ul class="flex gap-6">
+        {footerLinks.map((link) => (
+          <li>
+            <a
+              class="type-caption text-foreground transition-opacity hover:opacity-60"
+              href={link.href}
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              {link.label}
+            </a>
+          </li>
+        ))}
+      </ul>
+    </div>
+  </div>
+</footer>

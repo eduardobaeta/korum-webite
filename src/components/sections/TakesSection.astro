@@ -1,0 +1,91 @@
+---
+import type { ComponentProps } from 'astro/types';
+import type { LinkItem } from '@/components/types';
+import Button from '@/components/ui/Button.astro';
+import IndexedItem from '@/components/ui/IndexedItem.astro';
+import LineBreaks from '@/components/ui/LineBreaks.astro';
+import SectionIntro from '@/components/ui/SectionIntro.astro';
+import TagList from '@/components/ui/TagList.astro';
+
+interface Take {
+  index: string;
+  title: string;
+  lead: string;
+  price: string;
+  priceSuffix?: string;
+  note: string;
+  tags: readonly string[];
+}
+
+interface Extra {
+  name: string;
+  detail?: string;
+  price: string;
+}
+
+interface Props {
+  id: string;
+  intro: Omit<ComponentProps<typeof SectionIntro>, 'sticky'>;
+  takeAction: LinkItem;
+  takes: readonly Take[];
+  extras: { titleLines: readonly string[]; conditions: string; items: readonly Extra[] };
+}
+
+const { id, intro, takeAction, takes, extras } = Astro.props;
+---
+
+<section id={id} class="section-space bg-background">
+  <div class="container-site">
+    <div class="grid-site">
+      <div class="col-span-full lg:col-span-4">
+        <SectionIntro {...intro} sticky />
+      </div>
+
+      <ol class="col-span-full mt-12 flex flex-col gap-18 md:mt-16 md:gap-24 lg:col-span-7 lg:col-start-6 lg:mt-0 lg:gap-30">
+        {takes.map((take) => (
+          <IndexedItem index={take.index} size="lg">
+            <h3 class="type-title-lg text-foreground">{take.title}</h3>
+            <p class="type-lead mt-3 text-muted-foreground">{take.lead}</p>
+            <p class="mt-6 flex items-baseline gap-1.5">
+              <span class="type-price text-foreground">{take.price}</span>
+              {take.priceSuffix && <span class="type-body text-muted-foreground">{take.priceSuffix}</span>}
+            </p>
+            <p class="type-emphasis mt-2 text-foreground">{take.note}</p>
+            <TagList items={take.tags} class="mt-6" />
+            <Button href={takeAction.href} class="mt-8">
+              {takeAction.label}
+            </Button>
+          </IndexedItem>
+        ))}
+      </ol>
+    </div>
+
+    <div class="grid-site mt-24 md:mt-30 lg:mt-40">
+      <div class="col-span-full flex flex-col justify-between lg:col-span-4">
+        <h3 class="type-title-lg text-foreground" data-reveal-words>
+          <LineBreaks lines={extras.titleLines} />
+        </h3>
+        <p class="type-small hidden max-w-75 text-muted-foreground lg:block" data-reveal>
+          {extras.conditions}
+        </p>
+      </div>
+
+      <div class="col-span-full mt-22 md:mt-24 lg:col-span-6 lg:col-start-7 lg:mt-0">
+        <ul class="divide-y divide-border" data-reveal>
+          {extras.items.map((extra) => (
+            <li class="grid grid-cols-[minmax(0,1fr)_auto] items-center gap-x-5 py-5 md:grid-cols-[13.75rem_minmax(0,1fr)_6.875rem]">
+              <div class="md:contents">
+                <p class="type-emphasis text-foreground">{extra.name}</p>
+                <p class:list={['type-body text-muted-foreground', extra.detail && 'max-md:mt-0.5']}>{extra.detail}</p>
+              </div>
+              <p class="type-emphasis text-right text-foreground">{extra.price}</p>
+            </li>
+          ))}
+        </ul>
+        <p class="type-small mt-18 text-muted-foreground md:mt-20 lg:hidden" data-reveal>
+          {extras.conditions}
+        </p>
+      </div>
+    </div>
+  </div>
+</section>

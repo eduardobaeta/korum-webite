@@ -1,0 +1,50 @@
+---
+import SiteFooter from '@/components/layout/SiteFooter.astro';
+import SiteHeader from '@/components/layout/SiteHeader.astro';
+import CircleSection from '@/components/sections/CircleSection.astro';
+import ComparisonSection from '@/components/sections/ComparisonSection.astro';
+import FaqSection from '@/components/sections/FaqSection.astro';
+import HeroSection from '@/components/sections/HeroSection.astro';
+import HowItWorksSection from '@/components/sections/HowItWorksSection.astro';
+import ManifestoSection from '@/components/sections/ManifestoSection.astro';
+import NewsletterSection from '@/components/sections/NewsletterSection.astro';
+import ProblemSection from '@/components/sections/ProblemSection.astro';
+import ServicesSection from '@/components/sections/ServicesSection.astro';
+import StudioSection from '@/components/sections/StudioSection.astro';
+import TakesSection from '@/components/sections/TakesSection.astro';
+import VisitBookingSection from '@/components/sections/VisitBookingSection.astro';
+import {
+  circleContent,
+  comparisonContent,
+  faqContent,
+  heroContent,
+  howItWorksContent,
+  manifestoContent,
+  newsletterContent,
+  problemContent,
+  servicesContent,
+  studioContent,
+  takesContent,
+  visitBookingContent,
+} from '@/config/home-content';
+import BaseLayout from '@/layouts/BaseLayout.astro';
+---
+
+<BaseLayout>
+  <SiteHeader />
+  <main id="main-content" class="overflow-x-clip">
+    <HeroSection {...heroContent} />
+    <ProblemSection {...problemContent} />
+    <ManifestoSection {...manifestoContent} />
+    <ServicesSection {...servicesContent} />
+    <HowItWorksSection {...howItWorksContent} />
+    <TakesSection {...takesContent} />
+    <StudioSection {...studioContent} />
+    <CircleSection {...circleContent} />
+    <ComparisonSection {...comparisonContent} />
+    <FaqSection {...faqContent} />
+    <VisitBookingSection {...visitBookingContent} />
+    <NewsletterSection {...newsletterContent} />
+  </main>
+  <SiteFooter />
+</BaseLayout>

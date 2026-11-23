@@ -1,0 +1,35 @@
+---
+import LineBreaks from '@/components/ui/LineBreaks.astro';
+
+interface Props {
+  id: string;
+  eyebrow: string;
+  titleLines: readonly string[];
+  statementLines: readonly string[];
+}
+
+const { id, eyebrow, titleLines, statementLines } = Astro.props;
+---
+
+<!-- No background: the hero orb shows through the top of this section. -->
+<section id={id} class="relative pt-24 pb-35 md:pt-30 md:pb-45 lg:pt-40 lg:pb-55">
+  <div class="container-site">
+    <div class="grid-site gap-y-4 md:gap-y-6">
+      <p class="type-eyebrow col-span-full text-foreground lg:col-span-4" data-reveal>
+        {eyebrow}
+      </p>
+      <h2 class="type-heading-lg col-span-full text-foreground lg:col-span-8 lg:col-start-5" data-reveal-words>
+        <LineBreaks lines={titleLines} />
+      </h2>
+    </div>
+
+    <p
+      class="type-statement mx-auto mt-30 max-w-300 text-foreground md:mt-40 md:text-center lg:mt-50"
+      data-reveal-words
+      data-reveal-y="40"
+      data-reveal-duration="0.8"
+    >
+      <LineBreaks lines={statementLines} />
+    </p>
+  </div>
+</section>

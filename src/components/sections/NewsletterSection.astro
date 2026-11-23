@@ -1,0 +1,33 @@
+---
+import type { ComponentProps } from 'astro/types';
+import { NewsletterForm } from '@/features/leads';
+import LineBreaks from '@/components/ui/LineBreaks.astro';
+
+interface Props {
+  id: string;
+  eyebrow: string;
+  description: string;
+  titleLines: readonly string[];
+  form: ComponentProps<typeof NewsletterForm>;
+}
+
+const { id, eyebrow, description, titleLines, form } = Astro.props;
+---
+
+<section id={id} class="bg-background py-18 md:py-24 lg:py-30">
+  <div class="container-site grid-site">
+    <div class="col-span-full lg:col-span-4" data-reveal>
+      <p class="type-eyebrow text-foreground">{eyebrow}</p>
+      <p class="type-small mt-4 max-w-75 text-muted-foreground">{description}</p>
+    </div>
+
+    <div class="col-span-full mt-6 md:mt-10 lg:col-span-8 lg:col-start-5 lg:mt-0">
+      <h2 class="type-heading-md text-foreground" data-reveal-words>
+        <LineBreaks lines={titleLines} breakClass="md:hidden" />
+      </h2>
+      <div class="mt-8" data-reveal>
+        <NewsletterForm {...form} />
+      </div>
+    </div>
+  </div>
+</section>

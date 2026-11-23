@@ -1,0 +1,62 @@
+---
+import type { ImageMetadata } from 'astro';
+import type { LinkItem } from '@/components/types';
+import Button from '@/components/ui/Button.astro';
+import DecorativeImage from '@/components/ui/DecorativeImage.astro';
+import LineBreaks from '@/components/ui/LineBreaks.astro';
+
+interface Props {
+  id: string;
+  eyebrow: string;
+  titleLines: readonly string[];
+  lead: { emphasis: string; text: string };
+  action: LinkItem;
+  pillars: readonly { title: string; text: string }[];
+  orbImage: ImageMetadata;
+}
+
+const { id, eyebrow, titleLines, lead, action, pillars, orbImage } = Astro.props;
+const PILLAR_STAGGER_SECONDS = 0.08;
+---
+
+<section id={id} class="section-space relative overflow-x-clip bg-background">
+  <DecorativeImage
+    image={orbImage}
+    blend="multiply"
+    widths={[420, 680, 900, 1360]}
+    sizes="(min-width: 1200px) 820px, (min-width: 810px) 620px, 420px"
+    class="-top-18.5 -right-40 w-105 opacity-45 md:-top-25 md:-right-42 md:w-155 lg:-top-30 lg:-right-45 lg:w-205"
+    reveal={{ from: 0.9 }}
+  />
+
+  <div class="container-site relative">
+    <div class="grid-site gap-y-6">
+      <p class="type-eyebrow col-span-full text-foreground lg:col-span-4" data-reveal>
+        {eyebrow}
+      </p>
+
+      <div class="col-span-full lg:col-span-8 lg:col-start-5">
+        <h2 class="type-heading-xl text-foreground" data-reveal-words>
+          <LineBreaks lines={titleLines} />
+        </h2>
+        <p class="type-lead-lg mt-8 max-w-160 text-muted-foreground" data-reveal>
+          <span class="font-medium text-foreground">{lead.emphasis}</span> {lead.text}
+        </p>
+        <div class="mt-7" data-reveal>
+          <Button href={action.href} variant="text">
+            {action.label}
+          </Button>
+        </div>
+
+        <ul class="mt-16 grid gap-8 md:mt-20 md:grid-cols-3 md:gap-10 lg:mt-24">
+          {pillars.map((pillar, index) => (
+            <li data-reveal data-reveal-delay={String(index * PILLAR_STAGGER_SECONDS)}>
+              <h3 class="type-title-sm text-foreground">{pillar.title}</h3>
+              <p class="type-body mt-2.5 text-muted-foreground">{pillar.text}</p>
+            </li>
+          ))}
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>

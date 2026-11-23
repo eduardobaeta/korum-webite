@@ -1,0 +1,23 @@
+---
+import type { TextSegment } from '@/components/types';
+
+interface Props {
+  id: string;
+  segments: readonly TextSegment[];
+}
+
+const { id, segments } = Astro.props;
+---
+
+<section id={id} class="section-space bg-background">
+  <div class="container-site grid-site">
+    <h2 class="type-quote col-span-full text-muted-foreground lg:col-span-10" data-reveal-words>
+      {segments.map((segment, index) => (
+        <Fragment>
+          {index > 0 && ' '}
+          {segment.emphasis ? <span class="text-foreground">{segment.text}</span> : segment.text}
+        </Fragment>
+      ))}
+    </h2>
+  </div>
+</section>

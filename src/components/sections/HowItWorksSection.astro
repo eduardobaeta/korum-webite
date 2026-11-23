@@ -1,0 +1,40 @@
+---
+import LineBreaks from '@/components/ui/LineBreaks.astro';
+import TagList from '@/components/ui/TagList.astro';
+
+interface Props {
+  id: string;
+  eyebrow: string;
+  titleLines: readonly string[];
+  steps: readonly { index: string; title: string; text: string; tags: readonly string[] }[];
+}
+
+const { id, eyebrow, titleLines, steps } = Astro.props;
+const STEP_STAGGER_SECONDS = 0.08;
+---
+
+<section id={id} class="section-space bg-background">
+  <div class="container-site">
+    <div class="grid-site gap-y-6">
+      <p class="type-eyebrow col-span-full text-foreground lg:col-span-4" data-reveal>
+        {eyebrow}
+      </p>
+      <h2 class="type-heading-lg col-span-full text-foreground lg:col-span-8 lg:col-start-5" data-reveal-words>
+        <LineBreaks lines={titleLines} />
+      </h2>
+    </div>
+
+    <ol class="mt-14 grid gap-16 md:mt-18 md:gap-14 lg:mt-24 lg:grid-cols-3 lg:gap-16">
+      {steps.map((step, index) => (
+        <li data-reveal data-reveal-delay={String(index * STEP_STAGGER_SECONDS)}>
+          <p class="type-index text-decorative" aria-hidden="true" data-decorative>
+            {step.index} /
+          </p>
+          <h3 class="type-title-md mt-5 text-foreground">{step.title}</h3>
+          <p class="type-body mt-4 text-muted-foreground">{step.text}</p>
+          <TagList items={step.tags} class="mt-6" />
+        </li>
+      ))}
+    </ol>
+  </div>
+</section>
