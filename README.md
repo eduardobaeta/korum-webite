@@ -66,13 +66,17 @@ Copy `.env.example` to `.env` for local work; set the same variables per environ
   number.
 - **Rate limiting:** each client may send 6 submissions per 10 minutes per form. With the Upstash variables the
   limit is shared by every serverless instance; without them the API falls back to per-instance memory, which is
-  only a temporary measure (`docs/SECURITY.md` §2). Add the Upstash Redis integration in Vercel → Storage before
+  only a temporary measure (`docs/security.md` §2). Add the Upstash Redis integration in Vercel → Storage before
   launch.
 - Only the Vercel **production** deployment is indexable (`VERCEL_ENV`); previews and local builds get `noindex`
   and a disallow-all `robots.txt`. The sitemap, canonical URL and social image (`og:image`,
   `public/social-preview.jpg`) are emitted when a site URL is known. The image source lives in
   `~/Design/Korum/design/social-preview/` (`NODE_PATH=../../../../Desenvolvimento/korum-landing-page/node_modules node render.mjs`).
-- Security headers are set in `vercel.json`; verify them on a Preview deployment.
+- Security headers: the build sends the Content-Security-Policy as a response header for every prerendered page
+  (`staticHeaders`); `vercel.json` adds `frame-ancestors`, HSTS and the other headers. `astro dev` applies no
+  policy, so check CSP on a build or a Preview deployment.
+- URLs end in `/` (`trailingSlash: 'always'`), the form endpoints included (`/api/visit-requests/`); Vercel
+  redirects the other form with a 308. Unknown addresses get `src/pages/404.astro`.
 
 ## Design system
 
@@ -85,7 +89,8 @@ Tokens live in `src/styles/tokens.css` with the shadcn vocabulary (`background`,
   `form-control`.
 - Type roles: `type-display`, `type-heading-*`, `type-title-*`, `type-lead`, `type-body`, `type-eyebrow`… each
   steps at `md` and `lg` (`src/styles/typography.css`).
-- Fonts: Mona Sans 400/500/600, self-hosted from the same Google Fonts files the Framer build used.
+- Fonts: Mona Sans 400/500/600 through the Astro Fonts API (`fonts` in `astro.config.mjs`, files in
+  `src/assets/fonts/`), the same Google Fonts files the Framer build used; 500 and 600 are preloaded.
 
 ## Motion
 
@@ -101,8 +106,8 @@ an explicit opt-in through `siteConfig.smoothScroll`. Everything is off under `p
   (statuses, redirect, 429 + Retry-After, size and content-type limits, safe logging).
 - **E2E (Playwright):** page structure, canonical/social metadata and `noindex`, skip link, desktop navigation,
   mobile menu with keyboard, FAQ, reveal on scroll, axe WCAG audit, and form journeys (validation, success only
-  after server confirmation, server-side field errors, provider failure, rate limiting, newsletter, native
-  submission without JavaScript, confirmation pages). Form requests are intercepted in the browser, so tests never
+  after server confirmation, server-side field errors linked to their messages, provider failure, rate limiting,
+  newsletter, native submission without JavaScript, confirmation and not-found pages). Form requests are intercepted in the browser, so tests never
   reach a real provider.
 - Large decorative index numerals are excluded from the axe contrast check (pure decoration, hidden from
   assistive technology).

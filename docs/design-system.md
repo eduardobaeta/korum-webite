@@ -1,8 +1,8 @@
 # Design System — Astro
 
 > Engineering foundation for a site's visual layer. Each project owns its identity (palette, fonts, imagery, layout,
-> motion); the standard owns the structure. Token vocabulary and UI libraries are shared with the other stacks
-> ([CONVENTIONS.md §9–11](./CONVENTIONS.md)).
+> motion); the standard owns the structure. Token vocabulary, Tailwind wiring, icons and motion rules are in
+> [conventions.md §15–17](./conventions.md).
 
 ## 1. Token layers
 
@@ -38,32 +38,29 @@
 }
 ```
 
-`src/styles/globals.css` imports Tailwind, `tokens.css` and `typography.css` and defines the base layer. Breakpoints
-and custom spacing are added to `@theme` once instead of repeating arbitrary values in components.
-
-## 2. Typography
+## 2. Typography and fonts
 
 - Define a type scale as presets in `src/styles/typography.css` using `@utility type-<role>` (`type-display`,
   `type-heading-lg`, `type-body`, `type-eyebrow`…), each stepping at the project breakpoints.
 - Responsive sizes use either the presets or `clamp()` with deliberate min/max values; keep line length readable.
-- Self-host fonts (local `woff2` or Fontsource), load only used weights, set `font-display`, preload the fonts used
-  above the fold.
+- Fonts go through the **Astro Fonts API** (top-level `fonts` in `astro.config.mjs`, stable since Astro 6):
+  `fontProviders.local()` for files in `src/assets/fonts/` or `fontProviders.fontsource()`, with only the used
+  weights. Map the family's CSS variable in `@theme inline` (`--font-sans: var(--font-brand)`).
+- `BaseLayout` renders `<Font cssVariable="--font-brand" />` from `astro:assets`; add `preload` only for faces used
+  above the fold. Astro generates the `@font-face` rules and metric-adjusted fallbacks that limit layout shift.
 
 ## 3. Components
 
-| Folder | Content |
-| --- | --- |
-| `src/components/ui/` | Brand-neutral primitives: Button, TextField, SelectField, Tag, LineBreaks… |
-| `src/components/layout/` | SiteHeader, SiteFooter, navigation, skip link |
-| `src/components/sections/` | Page sections; receive copy and media through props from `src/config` |
-| `src/features/<f>/components/` | Feature UI (e.g. lead forms) |
-
 Every primitive has a clear purpose and stable typed API, real `<button>`/`<a>` semantics, states (hover,
-focus-visible, disabled, loading, success, error) and no brand values. Gotcha: Astro renders duplicated attributes
-instead of overriding them — resolve attributes like `type` before spreading props.
+focus-visible, disabled, loading, success, error) and no brand values. Sections receive copy and media through props
+from `src/config`. Folder roles are in [Architecture §3](./architecture.md).
 
-Icons: Lucide SVGs and brand SVGs imported as Astro SVG components from `src/assets/`; decorative ones get
-`aria-hidden="true"`. React islands may use shadcn/ui components when an island needs them.
+Gotchas:
+
+- Astro renders duplicated attributes instead of overriding them — resolve attributes like `type` before spreading
+  props.
+- Since Astro 7, `compressHTML` defaults to `'jsx'`: whitespace between inline elements disappears, so add `{' '}`
+  where words must stay apart.
 
 ## 4. Layout
 
@@ -73,13 +70,13 @@ Icons: Lucide SVGs and brand SVGs imported as Astro SVG components from `src/ass
 
 ## 5. Motion
 
-- CSS transitions first. **GSAP** (ScrollTrigger, SplitText) for choreography; reveal behavior configured through
-  data attributes so markup stays declarative.
-- **Lenis** smooth scrolling only when the project opts in (config flag); drive it from GSAP's ticker so
-  ScrollTrigger reads the smoothed position; pause it while overlays are open.
+- **GSAP** (ScrollTrigger, SplitText) for choreography; reveal behavior configured through data attributes so markup
+  stays declarative.
+- **Lenis** (opt-in config flag) is driven from GSAP's ticker so ScrollTrigger reads the smoothed position, and
+  pauses while overlays are open.
 - `prefers-reduced-motion: reduce` disables Lenis and non-essential motion. Content hidden for a reveal must stay
   visible when JavaScript does not run (gate hiding behind a `.js` class).
-- No scroll-jacking, no motion that hides core content from assistive technology; animate `transform`/`opacity`.
+- No scroll-jacking, no motion that hides core content from assistive technology.
 
 ## 6. Accessibility checklist
 
@@ -95,7 +92,6 @@ of literals; document reusable components; avoid a cross-project component libra
 
 ## References
 
+- Astro fonts: https://docs.astro.build/en/guides/fonts/
 - Tailwind CSS 4 theme variables: https://tailwindcss.com/docs/theme
-- shadcn/ui theming: https://ui.shadcn.com/docs/theming
-- Astro SVG components: https://docs.astro.build/en/guides/images/#svg-components
 - WCAG 2.2: https://www.w3.org/TR/WCAG22/

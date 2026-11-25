@@ -1,7 +1,7 @@
 import { isResult, type Result } from '@/lib/result';
 
 /**
- * The one fetch-based helper allowed in client code (docs/CONVENTIONS.md §12):
+ * The one fetch-based helper allowed in client code (docs/conventions.md §8):
  * pages that ship no Axios stay light.
  */
 export async function submitForm(form: HTMLFormElement): Promise<Result<unknown>> {
