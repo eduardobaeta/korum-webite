@@ -67,11 +67,22 @@ function markInvalidFields(form: HTMLFormElement, names: string[]): void {
   const controls = names
     .map((name) => form.elements.namedItem(name))
     .filter((control): control is HTMLElement => control instanceof HTMLElement);
+  const status = form.querySelector<HTMLElement>('[data-form-status]');
 
-  controls.forEach((control) => control.setAttribute('aria-invalid', 'true'));
+  controls.forEach((control) => {
+    control.setAttribute('aria-invalid', 'true');
+    const fieldError = document.getElementById(`${control.id}-error`);
+    if (fieldError) fieldError.hidden = false;
+    const description = fieldError ?? status;
+    if (description?.id) control.setAttribute('aria-describedby', description.id);
+  });
   controls[0]?.focus();
 }
 
 function clearInvalidFields(form: HTMLFormElement): void {
-  form.querySelectorAll('[aria-invalid]').forEach((control) => control.removeAttribute('aria-invalid'));
+  form.querySelectorAll('[aria-invalid]').forEach((control) => {
+    control.removeAttribute('aria-invalid');
+    control.removeAttribute('aria-describedby');
+  });
+  form.querySelectorAll<HTMLElement>('[data-field-error]').forEach((fieldError) => (fieldError.hidden = true));
 }

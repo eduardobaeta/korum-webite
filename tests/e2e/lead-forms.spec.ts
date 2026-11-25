@@ -2,8 +2,8 @@ import { expect, test, type Page, type Route } from '@playwright/test';
 
 test.use({ reducedMotion: 'reduce' });
 
-const VISIT_ENDPOINT = '**/api/visit-requests';
-const NEWSLETTER_ENDPOINT = '**/api/newsletter-subscriptions';
+const VISIT_ENDPOINT = '**/api/visit-requests/';
+const NEWSLETTER_ENDPOINT = '**/api/newsletter-subscriptions/';
 
 function answerWith(status: number, body: unknown) {
   return (route: Route) => route.fulfill({ status, contentType: 'application/json', body: JSON.stringify(body) });
@@ -60,7 +60,13 @@ test('highlights the fields the server rejects', async ({ page }) => {
 
   await expect(form.getByRole('status')).toHaveText(/confira os campos/i);
   await expect(form.getByLabel('WhatsApp*')).toHaveAttribute('aria-invalid', 'true');
+  await expect(form.getByLabel('WhatsApp*')).toHaveAccessibleDescription('Informe um WhatsApp com DDD.');
   await expect(form.getByLabel('WhatsApp*')).toBeFocused();
+  await expect(form.getByText('Informe seu nome.')).toBeHidden();
+
+  await page.route(VISIT_ENDPOINT, answerWith(200, { ok: true }));
+  await form.getByRole('button', { name: 'Agendar minha visita' }).click();
+  await expect(form.getByText('Informe um WhatsApp com DDD.')).toBeHidden();
 });
 
 test('keeps the data and explains when the submission fails', async ({ page }) => {
@@ -98,6 +104,21 @@ test('subscribes to the newsletter', async ({ page }) => {
   await form.getByRole('button', { name: 'Quero a pauta' }).click();
 
   await expect(form.getByRole('status')).toHaveText(/inscrição feita/i);
+});
+
+test('links the newsletter field to the error message the server returns', async ({ page }) => {
+  await page.route(
+    NEWSLETTER_ENDPOINT,
+    answerWith(422, { ok: false, error: { code: 'validation', fieldErrors: { email: ['Invalid email'] } } }),
+  );
+  await page.goto('/');
+
+  const form = page.locator('form[data-lead-form="newsletter-subscription"]');
+  await form.getByLabel('E-mail').fill('reader@example.com');
+  await form.getByRole('button', { name: 'Quero a pauta' }).click();
+
+  await expect(form.getByLabel('E-mail')).toHaveAccessibleDescription(/confira os campos/i);
+  await expect(form.getByLabel('E-mail')).toBeFocused();
 });
 
 test.describe('without JavaScript', () => {

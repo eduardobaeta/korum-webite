@@ -8,10 +8,11 @@ type Props = Omit<HTMLAttributes<'select'>, 'id' | 'name' | 'class'> & {
   label: string;
   name: string;
   options: readonly SelectOption[];
+  error?: string;
   class?: string;
 };
 
-const { id, label, name, options, class: className, ...selectAttributes } = Astro.props;
+const { id, label, name, options, error, class: className, ...selectAttributes } = Astro.props;
 ---
 
 <div class:list={['flex flex-col gap-2', className]}>
@@ -29,4 +30,9 @@ const { id, label, name, options, class: className, ...selectAttributes } = Astr
       aria-hidden="true"
     />
   </div>
+  {error && (
+    <p id={`${id}-error`} class="type-small text-foreground" data-field-error hidden>
+      {error}
+    </p>
+  )}
 </div>

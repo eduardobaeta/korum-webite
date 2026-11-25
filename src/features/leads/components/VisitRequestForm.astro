@@ -9,6 +9,7 @@ import { HONEYPOT_FIELD } from '../application/process-lead-submission';
 interface FieldText {
   label: string;
   placeholder?: string;
+  error?: string;
 }
 
 interface Props {
@@ -92,7 +93,12 @@ const { action, fields, interestOptions, periodOptions, submitLabel, note, messa
     {submitLabel}
   </Button>
   <p class="type-small mt-3 text-foreground">{note}</p>
-  <p class="type-small mt-2 font-semibold text-foreground empty:hidden" role="status" data-form-status></p>
+  <p
+    id="visit-request-status"
+    class="type-small mt-2 font-semibold text-foreground empty:hidden"
+    role="status"
+    data-form-status
+  ></p>
 </form>
 
 <script>

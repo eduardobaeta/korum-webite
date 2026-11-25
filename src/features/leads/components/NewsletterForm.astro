@@ -51,7 +51,12 @@ const { action, emailLabel, emailPlaceholder, submitLabel, note, messages, class
   </div>
 
   <p class="type-small mt-3 text-muted-foreground">{note}</p>
-  <p class="type-small mt-2 font-semibold text-foreground empty:hidden" role="status" data-form-status></p>
+  <p
+    id="newsletter-subscription-status"
+    class="type-small mt-2 font-semibold text-foreground empty:hidden"
+    role="status"
+    data-form-status
+  ></p>
 </form>
 
 <script>

@@ -6,10 +6,11 @@ type Props = Omit<HTMLAttributes<'input'>, 'id' | 'name' | 'class'> & {
   label: string;
   name: string;
   hideLabel?: boolean;
+  error?: string;
   class?: string;
 };
 
-const { id, label, name, hideLabel = false, class: className, type = 'text', ...inputAttributes } = Astro.props;
+const { id, label, name, hideLabel = false, error, class: className, type = 'text', ...inputAttributes } = Astro.props;
 ---
 
 <div class:list={['flex flex-col gap-2', className]}>
@@ -17,4 +18,9 @@ const { id, label, name, hideLabel = false, class: className, type = 'text', ...
     {label}
   </label>
   <input id={id} name={name} type={type} class="form-control type-field h-10" {...inputAttributes} />
+  {error && (
+    <p id={`${id}-error`} class="type-small text-foreground" data-field-error hidden>
+      {error}
+    </p>
+  )}
 </div>
