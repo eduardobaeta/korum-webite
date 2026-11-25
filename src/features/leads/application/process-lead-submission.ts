@@ -12,23 +12,28 @@ export type LeadSubmissionResult =
   /** Spam trap triggered: answer like a success so bots learn nothing. */
   | { status: 'ignored' }
   | { status: 'invalid'; fieldErrors: Record<string, string[]> }
+  | { status: 'unavailable' }
   | { status: 'failed'; reason: string };
 
 export interface LeadSubmission<Schema extends z.ZodType> {
   schema: Schema;
   toLead: (data: z.output<Schema>) => Lead;
-  gateway: LeadGateway;
+  /** Returns `null` when the destination is not configured. */
+  resolveGateway: () => LeadGateway | null;
 }
 
 /** Never throws: every outcome is returned for the HTTP boundary to map. */
 export async function processLeadSubmission<Schema extends z.ZodType>(
   fields: FormFields,
-  { schema, toLead, gateway }: LeadSubmission<Schema>,
+  { schema, toLead, resolveGateway }: LeadSubmission<Schema>,
 ): Promise<LeadSubmissionResult> {
   if (fields[HONEYPOT_FIELD]) return { status: 'ignored' };
 
   const parsed = schema.safeParse(fields);
   if (!parsed.success) return { status: 'invalid', fieldErrors: fieldErrorsOf(parsed.error) };
+
+  const gateway = resolveGateway();
+  if (!gateway) return { status: 'unavailable' };
 
   try {
     await gateway.submit(toLead(parsed.data));

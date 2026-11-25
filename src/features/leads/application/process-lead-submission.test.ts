@@ -20,10 +20,10 @@ const failingGateway: LeadGateway = {
   },
 };
 
-const newsletterSubmission = (gateway: LeadGateway) => ({
+const newsletterSubmission = (gateway: LeadGateway | null) => ({
   schema: newsletterSubscriptionSchema,
   toLead: (data: { email: string }): Lead => ({ type: 'newsletter-subscription', data }),
-  gateway,
+  resolveGateway: () => gateway,
 });
 
 describe('processLeadSubmission', () => {
@@ -74,5 +74,17 @@ describe('processLeadSubmission', () => {
     );
 
     expect(result).toEqual({ status: 'failed', reason: 'HTTP client error (unavailable)' });
+  });
+
+  it('reports an unconfigured destination only after the honeypot and validation pass', async () => {
+    expect(await processLeadSubmission({ email: 'reader@example.com' }, newsletterSubmission(null))).toEqual({
+      status: 'unavailable',
+    });
+    expect(await processLeadSubmission({ email: 'not-an-email' }, newsletterSubmission(null))).toMatchObject({
+      status: 'invalid',
+    });
+    expect(
+      await processLeadSubmission({ email: 'reader@example.com', [HONEYPOT_FIELD]: 'x' }, newsletterSubmission(null)),
+    ).toEqual({ status: 'ignored' });
   });
 });

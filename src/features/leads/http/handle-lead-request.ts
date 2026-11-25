@@ -13,7 +13,6 @@ const UNKNOWN_CLIENT = 'unknown';
 export interface LeadRequestOptions<Schema extends z.ZodType> {
   schema: Schema;
   toLead: (data: z.output<Schema>) => Lead;
-  /** Returns `null` when the destination is not configured. */
   resolveGateway: () => LeadGateway | null;
   successRedirect: string;
   rateLimiter: RateLimiter;
@@ -51,14 +50,9 @@ export async function handleLeadRequest<Schema extends z.ZodType>(
   const body = await readBodyWithinLimit(request, MAX_BODY_BYTES);
   if (body === null) return reply.failure(413, 'validation');
 
-  const gateway = resolveGateway();
-  if (!gateway) {
-    logError('[leads] destination is not configured');
-    return reply.failure(503, 'unavailable');
-  }
-
   const fields = Object.fromEntries(new URLSearchParams(body));
-  const result = await processLeadSubmission(fields, { schema, toLead, gateway });
+  const result = await processLeadSubmission(fields, { schema, toLead, resolveGateway });
+  if (result.status === 'unavailable') logError('[leads] destination is not configured');
   if (result.status === 'failed') logError(`[leads] provider failure: ${result.reason}`);
 
   return reply.result(result);
@@ -148,6 +142,8 @@ function createReplier(request: Request, successRedirect: string) {
         return wantsJson
           ? json(422, { ok: false, error: { code: 'validation', fieldErrors: outcome.fieldErrors } })
           : text(400);
+      case 'unavailable':
+        return failure(503, 'unavailable');
       case 'failed':
         return failure(502, 'unexpected');
     }

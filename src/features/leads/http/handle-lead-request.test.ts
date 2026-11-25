@@ -92,6 +92,16 @@ describe('handleLeadRequest', () => {
     expect(logged).toHaveLength(1);
   });
 
+  it('checks the honeypot and the fields before reporting a missing destination', async () => {
+    const { config } = options({ resolveGateway: () => null });
+
+    const invalid = await handleLeadRequest({ request: jsonRequest('email=invalid') }, config);
+    const spam = await handleLeadRequest({ request: jsonRequest('email=bot%40example.com&website=x') }, config);
+
+    expect(invalid.status).toBe(422);
+    expect(spam.status).toBe(200);
+  });
+
   it('refuses unsupported content types', async () => {
     const request = jsonRequest('{"email":"reader@example.com"}', { 'content-type': 'application/json' });
 
