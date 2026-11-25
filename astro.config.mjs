@@ -1,5 +1,5 @@
 // @ts-check
-import { defineConfig, envField } from 'astro/config';
+import { defineConfig, envField, fontProviders } from 'astro/config';
 import sitemap from '@astrojs/sitemap';
 import vercel from '@astrojs/vercel';
 import tailwindcss from '@tailwindcss/vite';
@@ -7,15 +7,17 @@ import { loadEnv } from 'vite';
 
 const { SITE_URL, VERCEL_PROJECT_PRODUCTION_URL } = loadEnv(process.env.NODE_ENV ?? 'production', process.cwd(), '');
 
+// In `astro dev`, staticHeaders sends a CSP without the build's hashes and blocks inline styles.
+const isBuild = process.argv.includes('build');
 const site = SITE_URL || (VERCEL_PROJECT_PRODUCTION_URL ? `https://${VERCEL_PROJECT_PRODUCTION_URL}` : undefined);
 
 export default defineConfig({
   site,
-  trailingSlash: 'ignore',
-  adapter: vercel(),
+  trailingSlash: 'always',
+  adapter: vercel({ staticHeaders: isBuild }),
   security: {
     checkOrigin: true,
-    // frame-ancestors cannot live in a <meta> CSP, so vercel.json sends it as a header.
+    // frame-ancestors and the other security headers are sent by vercel.json on every response.
     csp: {
       directives: [
         "default-src 'self'",
@@ -28,6 +30,24 @@ export default defineConfig({
       ],
     },
   },
+  // The static Google Fonts files (v2.000) the Framer build used, so metrics and line breaks match; no italics.
+  fonts: [
+    {
+      provider: fontProviders.local(),
+      name: 'Mona Sans',
+      cssVariable: '--font-brand',
+      weights: [400, 500, 600],
+      styles: ['normal'],
+      fallbacks: ['ui-sans-serif', 'system-ui', 'sans-serif'],
+      options: {
+        variants: [
+          { src: ['./src/assets/fonts/mona-sans-400.woff2'], weight: 400, style: 'normal' },
+          { src: ['./src/assets/fonts/mona-sans-500.woff2'], weight: 500, style: 'normal' },
+          { src: ['./src/assets/fonts/mona-sans-600.woff2'], weight: 600, style: 'normal' },
+        ],
+      },
+    },
+  ],
   integrations: site ? [sitemap({ filter: (page) => !page.includes('/thank-you') })] : [],
   env: {
     schema: {
