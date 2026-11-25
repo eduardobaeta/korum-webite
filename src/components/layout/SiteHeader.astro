@@ -1,10 +1,19 @@
 ---
 import CloseIcon from '@/assets/icons/close.svg';
 import MenuIcon from '@/assets/icons/menu.svg';
-import { anchorTo, interfaceText, primaryCallToAction, primaryNavigation, sectionIds, siteConfig } from '@/config/site';
+import {
+  anchorTo,
+  interfaceText,
+  linkFrom,
+  primaryCallToAction,
+  primaryNavigation,
+  sectionIds,
+  siteConfig,
+} from '@/config/site';
 import Button from '@/components/ui/Button.astro';
 
 const Logo = siteConfig.logo;
+const href = (target: string) => linkFrom(Astro.url.pathname, target);
 ---
 
 <div
@@ -14,7 +23,7 @@ const Logo = siteConfig.logo;
 
 <header class="pointer-events-none fixed inset-x-0 top-0 z-20">
   <div class="container-site flex items-center justify-between py-3 md:py-4 lg:py-6">
-    <a href={anchorTo(sectionIds.top)} class="pointer-events-auto" aria-label={interfaceText.homeLink}>
+    <a href={href(anchorTo(sectionIds.top))} class="pointer-events-auto" aria-label={interfaceText.homeLink}>
       <!-- The artwork touches the viewBox edges; overflow-visible keeps the antialiased base of the letters. -->
       <Logo class="h-auto w-26.25 overflow-visible text-foreground" aria-hidden="true" />
     </a>
@@ -23,13 +32,13 @@ const Logo = siteConfig.logo;
       <ul class="flex items-center gap-6">
         {primaryNavigation.map((item) => (
           <li>
-            <a href={item.href} class="type-nav text-foreground transition-opacity hover:opacity-60">
+            <a href={href(item.href)} class="type-nav text-foreground transition-opacity hover:opacity-60">
               {item.label}
             </a>
           </li>
         ))}
       </ul>
-      <Button href={primaryCallToAction.href}>{primaryCallToAction.label}</Button>
+      <Button href={href(primaryCallToAction.href)}>{primaryCallToAction.label}</Button>
     </nav>
 
     <button
@@ -57,13 +66,13 @@ const Logo = siteConfig.logo;
       <ul class="flex flex-col gap-1.75">
         {primaryNavigation.map((item) => (
           <li>
-            <a href={item.href} class="type-menu block text-background" data-menu-link>
+            <a href={href(item.href)} class="type-menu block text-background" data-menu-link>
               {item.label}
             </a>
           </li>
         ))}
       </ul>
-      <Button href={primaryCallToAction.href} variant="inverse" class="mt-3.5" data-menu-link>
+      <Button href={href(primaryCallToAction.href)} variant="inverse" class="mt-3.5" data-menu-link>
         {primaryCallToAction.label}
       </Button>
     </nav>

@@ -1,5 +1,5 @@
 ---
-import { contact, footerLinks, sectionIds, siteConfig } from '@/config/site';
+import { contact, footerLinks, linkFrom, sectionIds, siteConfig } from '@/config/site';
 import LineBreaks from '@/components/ui/LineBreaks.astro';
 
 const Logo = siteConfig.logo;
@@ -32,7 +32,7 @@ const Logo = siteConfig.logo;
           <li>
             <a
               class="type-caption text-foreground transition-opacity hover:opacity-60"
-              href={link.href}
+              href={linkFrom(Astro.url.pathname, link.href)}
               target="_blank"
               rel="noopener noreferrer"
             >

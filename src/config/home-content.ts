@@ -332,7 +332,7 @@ export const newsletterContent = {
   },
 };
 
-interface ThankYouContent {
+export interface MessagePageContent {
   title: string;
   eyebrow: string;
   headingLines: readonly string[];
@@ -342,7 +342,7 @@ interface ThankYouContent {
 
 const backToSite: LinkItem = { href: '/', label: 'Voltar ao site' };
 
-export const thankYouContent: Record<LeadType, ThankYouContent> = {
+export const thankYouContent: Record<LeadType, MessagePageContent> = {
   'visit-request': {
     title: 'Pedido recebido · Korum',
     eyebrow: 'Agende uma visita',
@@ -357,4 +357,12 @@ export const thankYouContent: Record<LeadType, ThankYouContent> = {
     lead: 'A primeira pauta chega na segunda. Sai quando quiser, com um clique.',
     actions: [backToSite],
   },
+};
+
+export const notFoundContent: MessagePageContent = {
+  title: 'Página não encontrada · Korum',
+  eyebrow: 'Erro 404',
+  headingLines: ['Página', 'não encontrada.'],
+  lead: 'Este endereço não existe ou mudou de lugar. Volte ao início ou agende uma visita ao estúdio.',
+  actions: [backToSite, { href: `/${bookVisitAnchor}`, label: 'Agendar visita' }],
 };

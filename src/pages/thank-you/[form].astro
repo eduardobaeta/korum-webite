@@ -1,11 +1,7 @@
 ---
 import type { GetStaticPaths, InferGetStaticPropsType } from 'astro';
-import SiteFooter from '@/components/layout/SiteFooter.astro';
-import SiteHeader from '@/components/layout/SiteHeader.astro';
-import Button from '@/components/ui/Button.astro';
-import LineBreaks from '@/components/ui/LineBreaks.astro';
+import MessagePage from '@/components/layout/MessagePage.astro';
 import { thankYouContent } from '@/config/home-content';
-import BaseLayout from '@/layouts/BaseLayout.astro';
 
 export const getStaticPaths = (() =>
   Object.entries(thankYouContent).map(([form, content]) => ({
@@ -15,24 +11,7 @@ export const getStaticPaths = (() =>
 
 type Props = InferGetStaticPropsType<typeof getStaticPaths>;
 
-const { title, eyebrow, headingLines, lead, actions } = Astro.props.content;
+const { content } = Astro.props;
 ---
 
-<BaseLayout title={title} description={lead} noindex>
-  <SiteHeader />
-  <main id="main-content" class="container-site flex min-h-svh flex-col justify-end pt-40 pb-16">
-    <p class="type-eyebrow text-foreground">{eyebrow}</p>
-    <h1 class="type-display mt-6 text-foreground">
-      <LineBreaks lines={headingLines} />
-    </h1>
-    <p class="type-lead mt-6 max-w-160 text-muted-foreground">{lead}</p>
-    <div class="mt-8 flex flex-wrap items-center gap-5">
-      {actions.map((action, index) => (
-        <Button href={action.href} variant={index === 0 ? 'solid' : 'text'}>
-          {action.label}
-        </Button>
-      ))}
-    </div>
-  </main>
-  <SiteFooter />
-</BaseLayout>
+<MessagePage content={content} />

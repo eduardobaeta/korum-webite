@@ -19,6 +19,10 @@ export const sectionIds = {
 
 export const anchorTo = (id: string): string => `#${id}`;
 
+/** Section anchors exist only on the home page, so other pages point them back to it. */
+export const linkFrom = (pathname: string, href: string): string =>
+  href.startsWith('#') && pathname !== '/' ? `/${href}` : href;
+
 export const siteConfig = {
   name: 'Korum',
   logo: BrandLogo,

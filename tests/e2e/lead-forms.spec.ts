@@ -148,3 +148,13 @@ test('confirmation pages are excluded from search results', async ({ page }) => 
     await expect(page.locator('meta[name="robots"]')).toHaveAttribute('content', 'noindex, nofollow');
   }
 });
+
+test('unknown addresses show the not-found page with a way back', async ({ page }) => {
+  const response = await page.goto('/this-page-does-not-exist/');
+
+  expect(response?.status()).toBe(404);
+  await expect(page.getByRole('heading', { level: 1 })).toHaveText(/página não encontrada/i);
+  await expect(page.locator('meta[name="robots"]')).toHaveAttribute('content', 'noindex, nofollow');
+  await page.getByRole('link', { name: 'Voltar ao site' }).click();
+  await expect(page).toHaveURL(/\/$/);
+});
