@@ -51,8 +51,10 @@ export default defineConfig({
   integrations: site ? [sitemap({ filter: (page) => !page.includes('/thank-you') })] : [],
   env: {
     schema: {
-      LEAD_WEBHOOK_URL: envField.string({ context: 'server', access: 'secret', optional: true, url: true }),
-      LEAD_WEBHOOK_TOKEN: envField.string({ context: 'server', access: 'secret', optional: true }),
+      ATTIO_API_TOKEN: envField.string({ context: 'server', access: 'secret', optional: true }),
+      ATTIO_DEAL_OWNER_EMAIL: envField.string({ context: 'server', access: 'secret', optional: true }),
+      BREVO_API_TOKEN: envField.string({ context: 'server', access: 'secret', optional: true }),
+      BREVO_NEWSLETTER_LIST_ID: envField.number({ context: 'server', access: 'secret', optional: true, int: true }),
       UPSTASH_REDIS_REST_URL: envField.string({ context: 'server', access: 'secret', optional: true, url: true }),
       UPSTASH_REDIS_REST_TOKEN: envField.string({ context: 'server', access: 'secret', optional: true }),
       VERCEL_ENV: envField.enum({
