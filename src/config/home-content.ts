@@ -7,6 +7,8 @@ import flutedPanelPortrait from '@/assets/images/fluted-panel-portrait.png';
 import lightOrb from '@/assets/images/light-orb.jpg';
 import type { LinkItem } from '@/components/types';
 import { VISIT_INTERESTS, VISIT_PERIODS, type LeadType, type VisitInterest, type VisitPeriod } from '@/features/leads';
+import { formatBrl } from '@/lib/currency';
+import { takePrices } from './prices';
 import { anchorTo, contact, sectionIds } from './site';
 
 const bookVisitAnchor = anchorTo(sectionIds.bookVisit);
@@ -124,7 +126,7 @@ export const takesContent = {
       index: '01',
       title: 'Episódio Piloto',
       lead: 'Grave um episódio e sinta o processo.',
-      price: 'R$ 590',
+      price: formatBrl(takePrices['pilot-episode']),
       note: 'Valor abatido no 1º mês do plano',
       tags: ['45 a 60 min de gravação', 'Briefing com o estrategista', '2 cortes editados'],
     },
@@ -132,7 +134,7 @@ export const takesContent = {
       index: '02',
       title: 'Dia Korum',
       lead: 'Um dia de estúdio. O mês resolvido.',
-      price: 'R$ 3.900',
+      price: formatBrl(takePrices['studio-day']),
       note: 'À vista ou em 2x',
       tags: [
         '6 h de estúdio com roteiro',
@@ -146,7 +148,7 @@ export const takesContent = {
       index: '03',
       title: 'Plano Autoridade',
       lead: '1 episódio por semana, em horário fixo.',
-      price: 'R$ 4.900',
+      price: formatBrl(takePrices['authority-plan']),
       priceSuffix: '/mês',
       note: 'Contrato de 6 meses',
       tags: [
