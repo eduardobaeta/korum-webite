@@ -1,8 +1,7 @@
 ---
-import type { ImageMetadata } from 'astro';
 import type { LinkItem } from '@/components/types';
 import Button from '@/components/ui/Button.astro';
-import DecorativeImage from '@/components/ui/DecorativeImage.astro';
+import FlutedLight from '@/components/ui/FlutedLight.astro';
 import LineBreaks from '@/components/ui/LineBreaks.astro';
 
 interface Props {
@@ -12,20 +11,15 @@ interface Props {
   lead: { emphasis: string; text: string };
   action: LinkItem;
   pillars: readonly { title: string; text: string }[];
-  orbImage: ImageMetadata;
 }
 
-const { id, eyebrow, titleLines, lead, action, pillars, orbImage } = Astro.props;
+const { id, eyebrow, titleLines, lead, action, pillars } = Astro.props;
 const PILLAR_STAGGER_SECONDS = 0.08;
 ---
 
 <section id={id} class="section-space relative overflow-x-clip bg-background">
-  <DecorativeImage
-    image={orbImage}
-    blend="multiply"
-    widths={[420, 680, 900, 1360]}
-    sizes="(min-width: 1200px) 820px, (min-width: 810px) 620px, 420px"
-    class="-top-18.5 -right-40 w-105 opacity-45 md:-top-25 md:-right-42 md:w-155 lg:-top-30 lg:-right-45 lg:w-205"
+  <FlutedLight
+    class="absolute -top-18.5 -right-40 aspect-square w-105 opacity-45 mix-blend-multiply md:-top-25 md:-right-42 md:w-155 lg:-top-30 lg:-right-45 lg:w-205"
     reveal={{ from: 0.9 }}
   />
 

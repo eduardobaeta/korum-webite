@@ -1,0 +1,192 @@
+---
+/**
+ * The studio light seen through fluted glass (docs/design-system.md, "Light"). Drawn as SVG at build time, so it
+ * scales to any size and takes any shape from its wrapper (border radius, clip path). Every flute shows the same light
+ * source through `<use>`, so animating `[data-fluted-light-source]` keeps the refraction consistent. Browsers do not
+ * carry CSS animations into `<use>` copies: animate with SVG (SMIL) or by changing attributes (e.g. GSAP `attr`).
+ */
+interface Props {
+  /** `orb` floats and fades out at its edges; `panel` fills its box with the light's base colour. */
+  variant?: 'orb' | 'panel';
+  theme?: 'light' | 'dark';
+  /** Width ÷ height of the drawing; the SVG covers its box (`slice`), so match the box's usual proportion. */
+  aspect?: number;
+  /** Light centre and radius as fractions of the drawing's width (x, radius) and height (y). */
+  light?: { x?: number; y?: number; radius?: number };
+  flutes?: number;
+  /** Horizontal compression of the light behind each flute; lower means stronger refraction. */
+  squeeze?: number;
+  motion?: 'none' | 'breathe' | 'drift';
+  class?: string;
+  reveal?: { from: number; duration?: number; delay?: number };
+}
+
+const {
+  variant = 'orb',
+  theme = 'light',
+  aspect = 1,
+  light = {},
+  flutes = variant === 'orb' ? 22 : 30,
+  squeeze = 0.45,
+  motion = 'none',
+  class: className,
+  reveal,
+} = Astro.props;
+
+const HEIGHT = 1000;
+const width = Math.round(HEIGHT * aspect);
+const fluteWidth = width / flutes;
+const center = { x: (light.x ?? 0.5) * width, y: (light.y ?? 0.5) * HEIGHT };
+const radius = (light.radius ?? (variant === 'orb' ? 0.32 : 0.36)) * Math.min(width, HEIGHT);
+
+const id = `fluted-light-${crypto.randomUUID().slice(0, 8)}`;
+const drift = { x: radius * 0.35, y: radius * 0.15 };
+const EASE_IN_OUT = '0.45 0 0.55 1; 0.45 0 0.55 1';
+const fluteCenters = Array.from({ length: flutes }, (_, index) => (index + 0.5) * fluteWidth);
+
+const palette = {
+  light: {
+    base: '#fbe7de',
+    halo: [
+      ['0', '#ffd6c0', '0.9'],
+      ['1', '#ffd6c0', '0'],
+    ],
+    core: [
+      ['0', '#ff5a1f', '1'],
+      ['0.3', '#ff5a1f', '0.9'],
+      ['0.65', '#ff824e', '0.5'],
+      ['1', '#ff824e', '0'],
+    ],
+    sheen: [
+      ['0', '#ffffff', '0'],
+      ['0.58', '#ffffff', '0.3'],
+      ['1', '#ffffff', '0'],
+    ],
+    fade: ['0.5', '1'],
+  },
+  dark: {
+    base: '#0a0a0a',
+    halo: [
+      ['0', '#ff6e32', '0.2'],
+      ['1', '#ff6e32', '0'],
+    ],
+    core: [
+      ['0', '#ff5a1f', '0.75'],
+      ['0.3', '#ff5a1f', '0.58'],
+      ['0.65', '#ff5a1f', '0.24'],
+      ['1', '#ff5a1f', '0'],
+    ],
+    sheen: [
+      ['0', '#000000', '0.18'],
+      ['0.3', '#000000', '0'],
+      ['0.6', '#ffffff', '0.05'],
+      ['0.82', '#ffffff', '0'],
+      ['1', '#000000', '0.18'],
+    ],
+    fade: ['0.35', '0.92'],
+  },
+}[theme];
+
+const revealAttributes = reveal
+  ? {
+      'data-reveal': 'scale',
+      'data-reveal-scale': String(reveal.from),
+      'data-reveal-duration': reveal.duration === undefined ? undefined : String(reveal.duration),
+      'data-reveal-delay': reveal.delay === undefined ? undefined : String(reveal.delay),
+    }
+  : {};
+---
+
+<div class:list={['pointer-events-none select-none', className]} aria-hidden="true">
+  <svg
+    class="block size-full"
+    viewBox={`0 0 ${width} ${HEIGHT}`}
+    preserveAspectRatio="xMidYMid slice"
+    data-fluted-light
+    data-motion={motion}
+    {...revealAttributes}
+  >
+    <defs>
+      <radialGradient id={`${id}-halo`}>
+        {palette.halo.map(([offset, color, opacity]) => (
+          <stop offset={offset} stop-color={color} stop-opacity={opacity} />
+        ))}
+      </radialGradient>
+      <radialGradient id={`${id}-core`}>
+        {palette.core.map(([offset, color, opacity]) => (
+          <stop offset={offset} stop-color={color} stop-opacity={opacity} />
+        ))}
+      </radialGradient>
+      <linearGradient id={`${id}-sheen`}>
+        {palette.sheen.map(([offset, color, opacity]) => (
+          <stop offset={offset} stop-color={color} stop-opacity={opacity} />
+        ))}
+      </linearGradient>
+      <radialGradient id={`${id}-fade`}>
+        <stop offset={palette.fade[0]} stop-color="#fff" />
+        <stop offset={palette.fade[1]} stop-color="#000" />
+      </radialGradient>
+      <mask id={`${id}-mask`} maskUnits="userSpaceOnUse" x="0" y="0" width={width} height={HEIGHT}>
+        <rect width={width} height={HEIGHT} fill={`url(#${id}-fade)`} />
+      </mask>
+      <g id={`${id}-source`} data-fluted-light-source>
+        {motion === 'drift' && (
+          <animateTransform
+            attributeName="transform"
+            type="translate"
+            values={`${-drift.x} ${drift.y}; ${drift.x} ${-drift.y}; ${-drift.x} ${drift.y}`}
+            dur="28s"
+            repeatCount="indefinite"
+            calcMode="spline"
+            keySplines={EASE_IN_OUT}
+          />
+        )}
+        <g transform={`translate(${center.x} ${center.y})`}>
+          <g>
+            {motion === 'breathe' && (
+              <>
+                <animateTransform
+                  attributeName="transform"
+                  type="scale"
+                  values="0.94; 1.06; 0.94"
+                  dur="18s"
+                  repeatCount="indefinite"
+                  calcMode="spline"
+                  keySplines={EASE_IN_OUT}
+                />
+                <animate
+                  attributeName="opacity"
+                  values="0.85; 1; 0.85"
+                  dur="18s"
+                  repeatCount="indefinite"
+                  calcMode="spline"
+                  keySplines={EASE_IN_OUT}
+                />
+              </>
+            )}
+            <circle r={radius * 1.7} fill={`url(#${id}-halo)`} />
+            <circle r={radius} fill={`url(#${id}-core)`} />
+          </g>
+        </g>
+      </g>
+    </defs>
+
+    <g mask={variant === 'orb' ? `url(#${id}-mask)` : undefined}>
+      {variant === 'panel' && <rect width={width} height={HEIGHT} fill={palette.base} />}
+      {fluteCenters.map((fluteCenter) => (
+        <svg
+          x={fluteCenter - fluteWidth / 2}
+          width={fluteWidth}
+          height={HEIGHT}
+          viewBox={`${fluteCenter - fluteWidth / 2} 0 ${fluteWidth} ${HEIGHT}`}
+        >
+          <use
+            href={`#${id}-source`}
+            transform={`translate(${fluteCenter} 0) scale(${squeeze} 1) translate(${-fluteCenter} 0)`}
+          />
+          <rect x={fluteCenter - fluteWidth / 2} width={fluteWidth} height={HEIGHT} fill={`url(#${id}-sheen)`} />
+        </svg>
+      ))}
+    </g>
+  </svg>
+</div>
