@@ -14,7 +14,8 @@ export interface LeadRequestOptions<Schema extends z.ZodType> {
   schema: Schema;
   toLead: (data: z.output<Schema>) => Lead;
   resolveGateway: () => LeadGateway | null;
-  successRedirect: string;
+  /** Where a native (no-JavaScript) submission lands; receives the request to pick the visitor's language. */
+  successRedirect: (request: Request) => string;
   rateLimiter: RateLimiter;
   /** Receives safe diagnostics only (never the submitted fields or client addresses). */
   logError?: (message: string) => void;
@@ -37,7 +38,7 @@ export async function handleLeadRequest<Schema extends z.ZodType>(
     logError = console.error,
   }: LeadRequestOptions<Schema>,
 ): Promise<Response> {
-  const reply = createReplier(request, successRedirect);
+  const reply = createReplier(request, successRedirect(request));
 
   if (!request.headers.get('content-type')?.includes(FORM_CONTENT_TYPE)) return reply.failure(415, 'validation');
 

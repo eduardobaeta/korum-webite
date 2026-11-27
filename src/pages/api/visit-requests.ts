@@ -1,3 +1,4 @@
+import { toLocale } from '@/config/i18n';
 import { thankYouPath } from '@/config/routes';
 import {
   createConfiguredRateLimiter,
@@ -13,5 +14,7 @@ export const POST = createLeadRoute({
   toLead: (data) => ({ type: 'visit-request', data }),
   resolveGateway: resolveConfiguredLeadGateway,
   rateLimiter: createConfiguredRateLimiter('visit-requests'),
-  successRedirect: thankYouPath('visit-request'),
+  // Forms on localized pages add `?locale=` to their action, so the confirmation page matches their language.
+  successRedirect: (request) =>
+    thankYouPath('visit-request', toLocale(new URL(request.url).searchParams.get('locale'))),
 });

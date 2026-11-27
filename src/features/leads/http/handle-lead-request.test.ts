@@ -21,7 +21,7 @@ function options(overrides: Partial<LeadRequestOptions<typeof newsletterSubscrip
     schema: newsletterSubscriptionSchema,
     toLead: (data): Lead => ({ type: 'newsletter-subscription', data }),
     resolveGateway: () => acceptingGateway,
-    successRedirect: '/thank-you/newsletter-subscription/',
+    successRedirect: () => '/thank-you/newsletter-subscription/',
     rateLimiter: createSlidingWindowRateLimiter({ limit: 100, windowMs: 60_000 }),
     logError: (message) => logged.push(message),
     ...overrides,
