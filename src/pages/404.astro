@@ -1,6 +1,9 @@
 ---
 import MessagePage from '@/components/layout/MessagePage.astro';
-import { notFoundContent } from '@/config/home-content';
+import { getContent } from '@/config/content';
+
+// One static 404 serves every address, so it uses the default language.
+const { notFoundContent } = getContent('pt');
 ---
 
 <MessagePage content={notFoundContent} />

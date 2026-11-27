@@ -14,7 +14,8 @@ bun run test:e2e   # Playwright (first run: bunx playwright install chromium)
 
 ## Where things live
 
-- Copy, navigation and prices: `src/config/`
+- Copy per language: `src/config/content/pt.ts` (default, at `/`) and `en.ts` (at `/en/`), same shape
+- Prices: `src/config/prices.ts`
 - Brand tokens: `src/styles/`
 - Social image source: `~/Design/Korum/design/social-preview/`
 

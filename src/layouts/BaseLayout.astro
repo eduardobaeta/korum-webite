@@ -3,7 +3,9 @@ import { createHash } from 'node:crypto';
 import { Font } from 'astro:assets';
 import '@/styles/globals.css';
 import { isIndexable } from '@/config/deployment';
-import { interfaceText, siteConfig } from '@/config/site';
+import { getContent } from '@/config/content';
+import { LOCALES, localeSettings, localizePath, toLocale, unlocalizePath } from '@/config/i18n';
+import { siteConfig } from '@/config/site';
 
 interface Props {
   title?: string;
@@ -11,12 +13,30 @@ interface Props {
   noindex?: boolean;
 }
 
-const { title = siteConfig.title, description = siteConfig.description, noindex = false } = Astro.props;
+const locale = toLocale(Astro.currentLocale);
+const { siteText } = getContent(locale);
+const { interface: interfaceText } = siteText;
+const { title = siteText.title, description = siteText.description, noindex = false } = Astro.props;
+const settings = localeSettings[locale];
 
 const canonicalUrl = Astro.site ? new URL(Astro.url.pathname, Astro.site).href : undefined;
 // Social crawlers need absolute URLs, so the image is only declared when the site origin is known.
 const socialImageUrl = Astro.site ? new URL(siteConfig.socialImage.path, Astro.site).href : undefined;
 const robots = isIndexable && !noindex ? 'index, follow' : 'noindex, nofollow';
+
+// Every indexable page exists in each locale at the same path, so its translations are announced to search engines.
+const basePath = unlocalizePath(Astro.url.pathname);
+const alternates =
+  Astro.site && !noindex
+    ? LOCALES.map((alternate) => ({
+        hreflang: localeSettings[alternate].language,
+        href: new URL(localizePath(basePath, alternate), Astro.site).href,
+      }))
+    : [];
+const defaultAlternate = Astro.site && !noindex ? new URL(basePath, Astro.site).href : undefined;
+const otherOpenGraphLocales = LOCALES.filter((other) => other !== locale).map(
+  (other) => localeSettings[other].openGraphLocale,
+);
 
 // Inline so the class exists before first paint; Astro does not hash is:inline scripts, so the CSP gets it here.
 const markScriptsEnabled = "document.documentElement.classList.add('js');";
@@ -24,7 +44,7 @@ Astro.csp?.insertScriptHash(`sha256-${createHash('sha256').update(markScriptsEna
 ---
 
 <!doctype html>
-<html lang={siteConfig.language} data-smooth-scroll={String(siteConfig.smoothScroll)}>
+<html lang={settings.language} data-smooth-scroll={String(siteConfig.smoothScroll)}>
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -32,12 +52,19 @@ Astro.csp?.insertScriptHash(`sha256-${createHash('sha256').update(markScriptsEna
     <meta name="description" content={description} />
     <meta name="robots" content={robots} />
     {canonicalUrl && <link rel="canonical" href={canonicalUrl} />}
+    {alternates.map((alternate) => (
+      <link rel="alternate" hreflang={alternate.hreflang} href={alternate.href} />
+    ))}
+    {defaultAlternate && <link rel="alternate" hreflang="x-default" href={defaultAlternate} />}
     <meta name="theme-color" content={siteConfig.themeColor} />
     <meta name="generator" content={Astro.generator} />
 
     <meta property="og:type" content="website" />
     <meta property="og:site_name" content={siteConfig.name} />
-    <meta property="og:locale" content={siteConfig.openGraphLocale} />
+    <meta property="og:locale" content={settings.openGraphLocale} />
+    {otherOpenGraphLocales.map((other) => (
+      <meta property="og:locale:alternate" content={other} />
+    ))}
     <meta property="og:title" content={title} />
     <meta property="og:description" content={description} />
     {canonicalUrl && <meta property="og:url" content={canonicalUrl} />}
@@ -47,7 +74,7 @@ Astro.csp?.insertScriptHash(`sha256-${createHash('sha256').update(markScriptsEna
         <meta property="og:image:type" content="image/jpeg" />
         <meta property="og:image:width" content={String(siteConfig.socialImage.width)} />
         <meta property="og:image:height" content={String(siteConfig.socialImage.height)} />
-        <meta property="og:image:alt" content={siteConfig.socialImage.alt} />
+        <meta property="og:image:alt" content={siteText.socialImageAlt} />
       </Fragment>
     )}
     <meta name="twitter:card" content={socialImageUrl ? 'summary_large_image' : 'summary'} />

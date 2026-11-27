@@ -1,0 +1,40 @@
+---
+import SiteFooter from '@/components/layout/SiteFooter.astro';
+import SiteHeader from '@/components/layout/SiteHeader.astro';
+import CircleSection from '@/components/sections/CircleSection.astro';
+import ComparisonSection from '@/components/sections/ComparisonSection.astro';
+import FaqSection from '@/components/sections/FaqSection.astro';
+import HeroSection from '@/components/sections/HeroSection.astro';
+import HowItWorksSection from '@/components/sections/HowItWorksSection.astro';
+import ManifestoSection from '@/components/sections/ManifestoSection.astro';
+import NewsletterSection from '@/components/sections/NewsletterSection.astro';
+import ProblemSection from '@/components/sections/ProblemSection.astro';
+import ServicesSection from '@/components/sections/ServicesSection.astro';
+import StudioSection from '@/components/sections/StudioSection.astro';
+import TakesSection from '@/components/sections/TakesSection.astro';
+import VisitBookingSection from '@/components/sections/VisitBookingSection.astro';
+import { getContent } from '@/config/content';
+import { toLocale } from '@/config/i18n';
+import BaseLayout from './BaseLayout.astro';
+
+const content = getContent(toLocale(Astro.currentLocale));
+---
+
+<BaseLayout>
+  <SiteHeader />
+  <main id="main-content" class="overflow-x-clip">
+    <HeroSection {...content.heroContent} />
+    <ProblemSection {...content.problemContent} />
+    <ManifestoSection {...content.manifestoContent} />
+    <ServicesSection {...content.servicesContent} />
+    <HowItWorksSection {...content.howItWorksContent} />
+    <TakesSection {...content.takesContent} />
+    <StudioSection {...content.studioContent} />
+    <CircleSection {...content.circleContent} />
+    <ComparisonSection {...content.comparisonContent} />
+    <FaqSection {...content.faqContent} />
+    <VisitBookingSection {...content.visitBookingContent} />
+    <NewsletterSection {...content.newsletterContent} />
+  </main>
+  <SiteFooter />
+</BaseLayout>

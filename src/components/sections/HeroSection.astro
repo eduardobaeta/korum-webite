@@ -1,61 +1,41 @@
 ---
-import type { ImageMetadata } from 'astro';
 import type { LinkItem } from '@/components/types';
 import Button from '@/components/ui/Button.astro';
-import DecorativeImage from '@/components/ui/DecorativeImage.astro';
+import FlutedLight from '@/components/ui/FlutedLight.astro';
 import LineBreaks from '@/components/ui/LineBreaks.astro';
 
 interface Props {
   id: string;
-  intro: {
-    inlineLead: string;
-    standaloneLead: string;
-    text: string;
-  };
+  intro: string;
   primaryAction: LinkItem;
   secondaryAction: LinkItem;
   titleLines: readonly string[];
   meta: { year: string; location: string; venue: string };
-  orbImage: ImageMetadata;
 }
 
-const { id, intro, primaryAction, secondaryAction, titleLines, meta, orbImage } = Astro.props;
+const { id, intro, primaryAction, secondaryAction, titleLines, meta } = Astro.props;
 ---
 
 <section id={id} class="relative bg-background">
   <!-- The orb bleeds into the next section, which has no background. -->
-  <DecorativeImage
-    image={orbImage}
-    eager
-    blend="multiply"
-    widths={[520, 680, 900, 1360]}
-    sizes="(min-width: 1200px) 900px, (min-width: 810px) 680px, 520px"
-    class="-bottom-33.75 -left-34 w-130 md:-bottom-48 md:-left-42 md:w-170 lg:-bottom-89 lg:-left-52.5 lg:w-225"
+  <FlutedLight
+    class="absolute -bottom-33.75 -left-34 aspect-square w-130 mix-blend-multiply md:-bottom-48 md:-left-42 md:w-170 lg:-bottom-89 lg:-left-52.5 lg:w-225"
     reveal={{ from: 0.6, duration: 1.4, delay: 1 }}
   />
 
-  <div class="container-site relative flex min-h-svh flex-col justify-between pt-24 pb-8 md:pt-28 md:pb-10 lg:pt-7.25 lg:pb-12">
-    <!-- On desktop the intro shares the logo line and sits above the header fade. -->
-    <div
-      class="relative lg:pointer-events-none lg:z-11 lg:ml-31.25"
-      data-scroll-fade
-      data-scroll-fade-distance="160"
-      data-scroll-fade-media="(min-width: 1200px)"
-    >
+  <div class="container-site relative flex min-h-svh flex-col justify-between pt-24 pb-8 md:pt-28 md:pb-10 lg:pt-36 lg:pb-12">
+    <div class="relative">
       <p
-        class="type-intro max-w-87.5 text-foreground md:max-w-105 lg:max-w-75"
+        class="type-intro max-w-87.5 text-foreground md:max-w-105"
         data-reveal
         data-reveal-delay="0.1"
         data-reveal-duration="0.6"
       >
-        <span class="hidden lg:inline">{intro.inlineLead}</span>
-        <span class="lg:hidden">{intro.standaloneLead}</span> {intro.text}
+        {intro}
       </p>
       <div class="mt-6 flex items-center gap-4 md:gap-5" data-reveal data-reveal-delay="0.2" data-reveal-duration="0.6">
-        <Button href={primaryAction.href} class="pointer-events-auto">
-          {primaryAction.label}
-        </Button>
-        <Button href={secondaryAction.href} variant="text" class="pointer-events-auto">
+        <Button href={primaryAction.href}>{primaryAction.label}</Button>
+        <Button href={secondaryAction.href} variant="text">
           {secondaryAction.label}
         </Button>
       </div>

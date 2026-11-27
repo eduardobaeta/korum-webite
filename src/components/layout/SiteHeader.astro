@@ -1,23 +1,29 @@
 ---
 import CloseIcon from '@/assets/icons/close.svg';
 import MenuIcon from '@/assets/icons/menu.svg';
-import {
-  anchorTo,
-  interfaceText,
-  linkFrom,
-  primaryCallToAction,
-  primaryNavigation,
-  sectionIds,
-  siteConfig,
-} from '@/config/site';
 import Button from '@/components/ui/Button.astro';
+import { getContent } from '@/config/content';
+import { LOCALES, localeSettings, localizePath, toLocale, unlocalizePath } from '@/config/i18n';
+import { anchorTo, linkFrom, sectionIds, siteConfig } from '@/config/site';
 
 const Logo = siteConfig.logo;
-const href = (target: string) => linkFrom(Astro.url.pathname, target);
+const locale = toLocale(Astro.currentLocale);
+const { siteText } = getContent(locale);
+const { interface: interfaceText, navigation: primaryNavigation, callToAction: primaryCallToAction } = siteText;
+const href = (target: string) => linkFrom(Astro.url.pathname, target, locale);
+
+const otherLocale = LOCALES.find((candidate) => candidate !== locale) ?? locale;
+const languageSwitch = {
+  href: localizePath(unlocalizePath(Astro.url.pathname), otherLocale),
+  label: localeSettings[otherLocale].label,
+  language: localeSettings[otherLocale].language,
+  description: interfaceText.otherLanguage,
+};
 ---
 
+<!-- Blurs whatever scrolls behind the header; the mask fades the blur out instead of ending in a hard edge. -->
 <div
-  class="pointer-events-none fixed inset-x-0 top-0 z-9 h-27.5 bg-linear-to-b from-background from-0% via-background via-45% to-background/0 md:h-30 lg:h-35"
+  class="pointer-events-none fixed inset-x-0 top-0 z-9 h-24 bg-background/15 backdrop-blur-sm [mask-image:linear-gradient(to_bottom,#000_55%,transparent)] md:h-28 lg:h-30"
   aria-hidden="true"
 ></div>
 
@@ -25,7 +31,7 @@ const href = (target: string) => linkFrom(Astro.url.pathname, target);
   <div class="container-site flex items-center justify-between py-3 md:py-4 lg:py-6">
     <a href={href(anchorTo(sectionIds.top))} class="pointer-events-auto" aria-label={interfaceText.homeLink}>
       <!-- The artwork touches the viewBox edges; overflow-visible keeps the antialiased base of the letters. -->
-      <Logo class="h-auto w-26.25 overflow-visible text-foreground" aria-hidden="true" />
+      <Logo class="h-auto w-20 overflow-visible text-foreground" aria-hidden="true" />
     </a>
 
     <nav class="pointer-events-auto hidden items-center gap-8 lg:flex" aria-label={interfaceText.primaryNavigation}>
@@ -37,6 +43,17 @@ const href = (target: string) => linkFrom(Astro.url.pathname, target);
             </a>
           </li>
         ))}
+        <li>
+          <a
+            href={languageSwitch.href}
+            hreflang={languageSwitch.language}
+            lang={languageSwitch.language}
+            aria-label={`${languageSwitch.label} · ${languageSwitch.description}`}
+            class="type-nav text-foreground transition-opacity hover:opacity-60"
+          >
+            {languageSwitch.label}
+          </a>
+        </li>
       </ul>
       <Button href={href(primaryCallToAction.href)}>{primaryCallToAction.label}</Button>
     </nav>
@@ -75,6 +92,14 @@ const href = (target: string) => linkFrom(Astro.url.pathname, target);
       <Button href={href(primaryCallToAction.href)} variant="inverse" class="mt-3.5" data-menu-link>
         {primaryCallToAction.label}
       </Button>
+      <a
+        href={languageSwitch.href}
+        hreflang={languageSwitch.language}
+        lang={languageSwitch.language}
+        class="type-nav mt-5 block text-background/70 transition-opacity hover:opacity-60"
+      >
+        {languageSwitch.description}
+      </a>
     </nav>
   </div>
 </header>

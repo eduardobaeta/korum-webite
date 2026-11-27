@@ -1,0 +1,17 @@
+---
+import type { GetStaticPaths, InferGetStaticPropsType } from 'astro';
+import MessagePage from '@/components/layout/MessagePage.astro';
+import { getContent } from '@/config/content';
+
+export const getStaticPaths = (() =>
+  Object.entries(getContent('en').thankYouContent).map(([form, content]) => ({
+    params: { form },
+    props: { content },
+  }))) satisfies GetStaticPaths;
+
+type Props = InferGetStaticPropsType<typeof getStaticPaths>;
+
+const { content } = Astro.props;
+---
+
+<MessagePage content={content} />

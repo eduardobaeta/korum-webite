@@ -14,6 +14,11 @@ const site = SITE_URL || (VERCEL_PROJECT_PRODUCTION_URL ? `https://${VERCEL_PROJ
 export default defineConfig({
   site,
   trailingSlash: 'always',
+  i18n: {
+    locales: ['pt', 'en'],
+    defaultLocale: 'pt',
+    routing: { prefixDefaultLocale: false },
+  },
   adapter: vercel({ staticHeaders: isBuild }),
   security: {
     checkOrigin: true,
@@ -48,7 +53,14 @@ export default defineConfig({
       },
     },
   ],
-  integrations: site ? [sitemap({ filter: (page) => !page.includes('/thank-you') })] : [],
+  integrations: site
+    ? [
+        sitemap({
+          filter: (page) => !page.includes('/thank-you'),
+          i18n: { defaultLocale: 'pt', locales: { pt: 'pt-BR', en: 'en' } },
+        }),
+      ]
+    : [],
   env: {
     schema: {
       ATTIO_API_TOKEN: envField.string({ context: 'server', access: 'secret', optional: true }),
